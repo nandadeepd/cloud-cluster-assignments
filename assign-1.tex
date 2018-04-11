@@ -1,0 +1,159 @@
+\documentclass[12pt]{article}
+ \usepackage[margin=1in]{geometry} 
+\usepackage{amsmath,amsthm,amssymb,amsfonts}
+ 
+\newcommand{\N}{\mathbb{N}}
+\newcommand{\Z}{\mathbb{Z}}
+ 
+\newenvironment{problem}[2][Problem]{\begin{trivlist}
+\item[\hskip \labelsep {\bfseries #1}\hskip \labelsep {\bfseries #2.}]}{\end{trivlist}}
+
+ 
+\begin{document}
+ 
+
+ 
+\title{Cloud \& Cluster Data Management}
+\author{Davuluru Nandadeep, Patel Rohan}
+\maketitle
+ 
+\begin{problem}{1}
+Estimate the total number of users with accounts for the application. Explain your estimation process. Cite any sources you consulted.
+\end{problem}
+ 
+\begin{proof}
+There are nearly 2-3 accounts created every second across the world in linkedIn. The application was started in 2003, May and right now the user base is around 546 million (registered users). Source: https://about.linkedin.com/
+
+\end{proof}
+
+\begin{problem}{2}
+List what you think are the three main kinds of data for the application that are maintained on a per-user basis.
+\end{problem}
+ 
+\begin{proof}
+Every user, we think, holds some kind of images, sound clips, videos along with the primary textual data. This textual data is probably a dump of user details - their posts, activity, profiles. 
+\begin{itemize}
+\item User Profile - Text, Image
+\item User Posts -  Articles
+\item User connections - links to other users who the current user is connected to.
+\end{itemize}
+
+\end{proof}
+
+\begin{problem}{3}
+Estimate the average amount of data per user for each of the three kinds of data in Question 2. Explain the basis for your estimate.
+\end{problem}
+\begin{proof}
+User profile (exported on disk as pdf) - When a user’s profile is exported to disk in a PDF format, it is a 37 kb file. When a per-user data estimate is requested, we assume that there should be other entities involved like the types of data mentioned in the above question. For instance, there’s user’s profile picture (if any). This can be of different resolutions; on an average, we picked a 1200x720 px picture which on cloud could be ranging from 2 - 3 mb after some amount of compression. So totally we would get around 3 - 3.5 MB per user.
+
+An article, consisting of 300 - 600 words, when exported to a Microsoft document, comes up to 10 -12 kb on disk. An article may consist several image or may not consist image at all; on an average we assumed that each article consist at least 1 image of 2 MB. So after our estimation each article costs around  0.16 mb. This \textbf{estimation} is arrived at as follows:
+{\begin{itemize}
+\item Every second 2 users are created on LinkedIn
+\item There are 100000 articles posted weekly
+In a week there are 600000 seconds and therefore 1.2 million new users
+\item 1 in every 12 users approximately posts an article
+546 million / 12 = 45 million articles exist on linkedin approximately
+\item 45 million * 2 (for each article) = 90 million mb for ALL articles on linkedin
+\item 90 million / 546 million = 0.16 mb for ONE article for SINGLE user.
+\end{itemize}}
+Average number of connections per LinkedIn user is 400. Each connection consist Profile name(20 Bytes), Designation(50 Bytes) and connection info(10 Bytes). Therefor, total 80 Bytes of data require per connection. For 400 connections we would require around 31 KB per user. 
+
+\textit{Source}: https://expandedramblings.com/index.php/by-the-numbers-a-few-important-linkedin-stats/
+
+\end{proof}
+
+\begin{problem}{4}
+Use the answers to Questions 1 and 3 to estimate the total amount of user data managed by the application provider.
+\end{problem}
+\begin{proof}
+Based on Q1, Q3 we assumed that a user would have connection data, profile, article(s). This has a data split up of ~31 kb + ~3500 kb + ~160 kb respectively. So an average user on linkedin is expected to have 3691 kb. For 546 million users we have around 1900 Terabytes of data!
+\newline
+\textit{Source}: https://www.quora.com/What-is-LinkedIn-s-database-architecture-like
+
+\end{proof}
+
+
+\begin{problem}{5}
+Identify two common operations a user might do with the application that involves the data of one or more users. At least one operation should be an update. For each operation, say which kind(s) of data in Question 2 that it uses.
+\end{problem}
+\begin{proof}
+User specific operations:
+\begin{itemize}
+\item User specific operations - Posting an article(updatable)
+\item messages
+\item Optionally:  profile (upload/update)
+\end{itemize}
+\end{proof}
+
+
+\begin{problem}{6}
+For each operation in Question 5, estimate how much data is touched on average each time the operation is performed. Explain your estimation process.
+\end{problem}
+ 
+\begin{proof}
+The estimation is as follows:
+\begin{itemize}
+\item An article, consisting of 300 - 600 words, when exported to a Microsoft document, comes up to 10 -12 kb on disk. + if it includes an image it will be 3.5 mb in total for an article. 
+\item Profile \(\rightarrow\) 35 kb - 50 kb for new upload. Assuming the worst case scenario is where a user adds more content - it is still in cap of 50 kb.
+\item The average data for each message when sent back and forth is around 10 - 15 kb.
+\end{itemize}
+
+\textit{Source}: https://www.lifewire.com/what-is-the-average-size-of-an-email-message-1171208
+
+\end{proof}
+
+
+\begin{problem}{7}
+Estimate how many times per day an average user performs each operation in Question 5, and explain your estimation process.
+\end{problem}
+ 
+\begin{proof}
+The estimation is as follows:
+\begin{itemize}
+\item It is estimated that 3 million users share some content on linkedin weekly. There are ~100,000 articles weekly. That is around 100,000 / 7 -> 14,285 per day. Each article is assumed to be around 3.5 mb (including an image at least). So there’s nearly a fraction of 0.0047 articles per user per day because it is known statistic that 3 million users post some content weekly.
+% reference 5
+\item Statistics suggests that each user spends average 17 minutes per month on LinkedIn. Statistics also suggests that around 50\%(~250 millions)  users are active on LinkedIn. We assumed that each user would use LinkedIn message twice a month with short 3-5 messages each time (considering the fact that there are other batter and interactive ways for messaging). An average active user would send 8-10 messages per month, i.e 0.3 messages per day.
+\end{itemize}
+\end{proof}
+\begin{problem}{8}
+Use your answers to Questions 1, 6 and 7 to figure out how much data is accessed per minute across all users of the application.
+\end{problem}
+ 
+\begin{proof}
+In answer to question 7, we derived that each user does 0.3 messages per day. An average text message takes about 8-10 Kb of storage data. Therefore, 80-100 Kb required for each user per month. So, 0.0020 Kb required per each user per minute for messaging. 
+
+In answer to question 7, we derived that each user posts  0.0047 articles per day. Each article is assumed to be around 3.5 mb (including an image at least). Therefore, 16.92 Kb per day required for each active user, i.e 0.011 Kb per minute for each user.
+
+In conclusion, for all 546 millions user of LinkedIn requires 12012 Kb, i.e ~12 Mb data per minute.
+
+\end{proof}
+\begin{problem}{9}
+Use your answers to Questions 4 and 8 to estimate what percentage of the total user data is accessed each minute and each day. (Note: In coming up with the daily percentage, you might want to take into account how much overlap there is in the data accessed during a day. Explain your adjustment if you make one.)
+\end{problem}
+ 
+\begin{proof}
+Each minute 12 Mb data accessed by LinkedIn users. Each day 16.8 Gb data accessed by LinkedIn users. 
+In answer to question 4, we derived that 1900 Tb of total data managed by LinkedIn.
+Therefore, each minute 0.0000006\% of total data accessed by linkedIn user.
+Each day 0.00086\% of total data accessed by linkedIn user.
+
+\end{proof}
+\begin{problem}{10}
+To what extent do different instances of your operations need to see consistent data. Consider both two instances of the same operation (2 cases) and two instances of different operations (1 case). You might think about this question in terms of whether serializable update, eventual consistency, best effort or no synchronization is required.
+\end{problem}
+ 
+\begin{proof}
+\begin{itemize}
+\item For user profile, we need data consistency because if a user updates his current location or current work or headline, it needs to be updated everywhere (across all nodes).
+\item For messaging between two users, the order(consistency) is paramount because the messaging platform on linkedin is instant exchange. If there is a lack of consistency then it could literally drift away the conversation. 
+\item For articles, as discussed in class, the order of posts don’t really matter when a third user is viewing an interleaved version of two other users’ articles. In that case, availability of posts takes the show spot over consistency. 
+	\begin{itemize}
+	\item In the other case, where one user is viewing another user’s profile, the order of his posts (chronologically) matter. Therefore, they must be consistently updated. 
+
+	\end{itemize}
+\end{itemize}
+\end{proof}
+
+
+
+\end{document}
