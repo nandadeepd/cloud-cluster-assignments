@@ -1,0 +1,92 @@
+\documentclass[a4paper]{article}
+
+\usepackage[english]{babel}
+\usepackage[utf8]{inputenc}
+\usepackage{fullpage}
+\usepackage{hyperref}
+\usepackage{amssymb}
+\usepackage{graphicx}
+\title{Cloud \& Cluster Data Management - Assignment 2}
+\author{Davuluru Nandadeep}
+\date{04/19/2018}
+
+\begin{document}
+\maketitle
+
+\section{Examining existing datasets}
+
+\subsection{For each of these datasets, say what other datasets it depends on, and describe in English what you think it computes.}
+
+\begin{itemize}
+\item \textbf{3RD\_HIGHEST\_FAT}
+	\begin{itemize}
+	\item This dataset contains the details for the 3rd highest total fat content from the main dataset \(\rightarrow\) Table Categorized Fat (which is the upper level hierarchical dependency).
+    \item The innermost query gets all the rows in descending order of total fat and forms a temporary relation X while outer query gets the 3rd row and projects all the columns. 
+	\end{itemize}
+\item \textbf{CATEGORIZED\_FAT.XLSX.TXT}
+	\begin{itemize}
+	\item This is the main dataset for categorized fats. 
+    \item The query displays the entire dataset from the relation \"table\_categorized\_fat
+	\end{itemize}
+\item \textbf{TOTAL\_FAT\_6\_MONTH\_PROJECTION}
+	\begin{itemize}
+	\item This dataset is dependent on the categorized fat with calorie count
+    \item This specific dataset conveys statistic about the projected fat consumption/intake in the 6 month time duration
+	\end{itemize}
+\item \textbf{CATEGORIZED\_FAT\_WITH\_CALORIES}
+	\begin{itemize}
+	\item Measures the fat types and contains the typical calories count for each type. 
+    \item The only dependency would be the total fat content per category as a prescience. 
+	\end{itemize}
+\item \textbf{CATEGORIZED FAT PERCENTS}
+	\begin{itemize}
+	\item Amount of fat by percentage in different food categories
+    \item The only dependency would be the total fat content per category as a prescience.
+	\end{itemize}
+\item \textbf{FAT\_GRAM\_INTAKE\_PROJECTION}
+	\begin{itemize}
+	\item Displays all the entries that are dated after 08/16/11 
+    \item These entries are the averaged fat content across different categories and checks if it is in the bounds of fat intake using previous entries (earlier dates). 
+	\end{itemize}
+    
+\end{itemize}
+
+\subsection{Derive a dataset by running the following query:}
+SELECT "Date", "Total Calories", "Total Fat" FROM cuong3\_pdx\_edu."categorized\_fat\_with\_calories" WHERE seafood\_calories $>$ nut\_calories AND vegetable\_calories $>$ chocolate\_calories;
+\begin{figure}
+\includegraphics[scale = 0.4]{q2result}
+\caption{Result for the given query}
+\end{figure}
+
+
+\section{Uploading your own datasets}
+\begin{itemize}
+\item Source:
+	\begin{itemize}
+    	\item https://github.com/awesomedata/awesome-public-datasets
+    	\item https://github.com/JeffSackmann/tennis\_atp
+    	\item second dataset \(\rightarrow\) https://github.com/JeffSackmann/tennis\_wta
+    \end{itemize}
+\item Description:
+	\begin{itemize}
+	\item The dataset is a statistical collection of matches taken place in the tournaments conducted by ATP (Association of Tennis Professionals) and WTA (World Tennis Association) during the year 1993. The intention is to keep the CSVs simple so that I can augment learning the SQL Share portal. 
+	\end{itemize}
+\item Queries:
+	\begin{itemize}
+	\item select count(*) as counter, tourney\_name from davuluru\_pdx\_edu."atp1993.csv" group by tourney\_name
+    	\begin{itemize}
+    	\item Generated dataset called match\_counter\_by\_tournament
+        \item defines how many matches have been played in a tournament
+    	\end{itemize}
+    \item SELECT count(*) as matches\_played, winner\_name FROM davuluru\_pdx\_edu."atp1993.csv" group by winner\_name order by matches\_played desc
+    	\begin{itemize}
+    	\item Generated dataset called counter\_winner\_match
+        \item defines how many matches have been played by the winners in tournaments ordered in decreasing with respect to matches. 
+    	\end{itemize}
+    \item 
+	\end{itemize}
+\end{itemize}
+    
+\section{Combining Datasets}
+SELECT DISTINCT A.tourney\_name, A.winner\_age, A.winner\_name FROM davuluru\_pdx\_edu."atp1993.csv" A JOIN davuluru\_pdx\_edu."wta1993.csv" B on A.tourney\_name = B.tourney\_name
+\end{document}
